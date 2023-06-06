@@ -13,9 +13,12 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :virtualbox do |v|
     v.gui = true
-    v.memory = 2048
+    v.memory = 4096
     v.name="test_machine"
   end
+
+  # Enable RDP
+  config.vm.network "forwarded_port", guest: 3389, host: 3389, id: "rdp", auto_correct: true
 
   # Update repositories
   config.vm.provision :shell, inline: "sudo apt-get update -y"
