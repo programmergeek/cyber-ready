@@ -117,14 +117,34 @@ quit
 
 10. Leave the bash shell for the container and return to the main shell of your Linux system by entering exit
 
+## Initialize the Guacamole Containers
+
+1. Start guacd in Docker:
+
+```bash
+docker run --name example-guacd -d guacamole/guacd
+```
+
+2. Start guacamole in Docker, making sure to link the containers so Guacamole can verify credentials stored in the MySQL database. Replace the value for `MYSQL_PASSWORD` with the password you configured for the MySQL database user `guacamole_user`.
+
+```bash
+docker run --name example-guacamole --link example-guacd:guacd --link example-mysql:mysql -e MYSQL_DATABASE=guacamole_db -e MYSQL_USER=guacamole_user -e MYSQL_PASSWORD=guacamole_user_password -d -p 127.0.0.1:8080:8080 guacamole/guacamole
+```
+
+3. To verify that all the docker containers are running properly, run the following command.
+
+```bash
+docker ps -a
+```
+
 ## Configure Guacamole
 
 
 # Setup the Virtual Machine
 
 ## Vagrant
-### **Install Vagrant**
 
+### **Install Vagrant**
 
 
 ### **Configure your Virtual Machine**
@@ -156,6 +176,14 @@ Vagrant.configure("2") do |config|
   # start xRDP on startup
   config.vm.provision :shell, inline: "sudo systemctl enable xrdp"
 
+  # Configure ubuntu to allow the remote user to access it
+  config.vm.provision :shell, path: "scripts/create_colord_pkla.sh"
+
+  # Configure xrdp to correctly display desktop environment
+  config.vm.provision :shell, inline: "sudo sed -i '4 i\\export XDG_CURRENT_DESKTOP=ubuntu:GNOME' /etc/xrdp/startwm.sh"
+  config.vm.provision :shell, inline: "sudo sed -i '4 i\\export GNOME_SHELL_SESSION_MODE=ubuntu' /etc/xrdp/startwm.sh"
+  config.vm.provision :shell, inline: "sudo sed -i '4 i\\export DESKTOP_SESSION=ubuntu' /etc/xrdp/startwm.sh"
+  
   # Add desktop environment
   config.vm.provision :shell, inline: "sudo apt-get install -y --no-install-recommends ubuntu-desktop"
   config.vm.provision :shell, inline: "sudo apt-get install -y --no-install-recommends virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11"
@@ -167,10 +195,109 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: "sudo shutdown -r now"
   
 end
+```
 
+`scripts/create_colord_pkla.sh`:
+```bash
+#!/bin/bash
+
+# Set the target directory and file
+target_dir="/etc/polkit-1/localauthority/50-local.d"
+target_file="45-allow-colord.pkla"
+
+# Check if the target directory exists, if not, create it
+if [ ! -d "$target_dir" ]; then
+    sudo mkdir -p "$target_dir"
+fi
+
+# Write the content to the target file
+sudo tee "$target_dir/$target_file" > /dev/null << EOL
+[Allow Colord all Users]
+Identity=unix-user:*
+Action=org.freedesktop.color-manager.create-device;org.freedesktop.color-manager.create-profile;org.freedesktop.color-manager.delete-device;org.freedesktop.color-manager.delete-profile;org.freedesktop.color-manager.modify-device;org.freedesktop.color-manager.modify-profile
+ResultAny=no
+ResultInactive=no
+ResultActive=yes
+EOL
 ```
 
 ## Packer (Optional but Recommended)
 
+This step is optional. Using the vagrant configuration file as is will get you the preconfigured virtual machine we need for this project, but doing this means that you would have to wait roughly 20mins everytime you spin up a new machine. If you want to avoid the wait you can create a new vagrant base box with everything we need preinstalled and configured. 
+
+```hcl
+variable "version" {
+  default = "20230530.0.0"
+}
+
+source "vagrant" "csub_base" {
+  source_path  = "ubuntu/bionic64"
+  box_version = var.version
+  communicator = "ssh"
+  box_name = "csub_base"
+}
+
+build {
+  sources = ["source.vagrant.csub_base"]
+
+  provisioner "shell" {
+    inline = [
+      "sudo apt-get update -y",
+      "sudo apt-get upgrade -y",
+      "sudo apt-get install -y --no-install-recommends ubuntu-desktop",
+      "sudo apt-get install -y --no-install-recommends virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11",
+      "sudo apt-get install -y xrdp",
+      "sudo systemctl enable xrdp",
+      "sudo systemctl start xrdp",
+      "sudo usermod -a -G sudo vagrant",
+    ]
+  }
+
+  provisioner "shell" {
+    script = "scripts/create_colord_pkla.sh"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo sed -i '4 i\\export XDG_CURRENT_DESKTOP=ubuntu:GNOME' /etc/xrdp/startwm.sh",
+      "sudo sed -i '4 i\\export GNOME_SHELL_SESSION_MODE=ubuntu' /etc/xrdp/startwm.sh",
+      "sudo sed -i '4 i\\export DESKTOP_SESSION=ubuntu' /etc/xrdp/startwm.sh"
+    ]
+  }
+
+  provisioner "shell" {
+    expect_disconnect = true
+    inline = [
+      "sudo shutdown -r now",
+    ]
+  }
+}
+```
+
+Run `packer build filename.pkr.hcl`. You should get folder called `output-csub_base` that will contain two files: `Vagrantfile` and `package.box`. Now run `vagrant box add csub_base ./output-csub_base/package.box`. 
+
+Finally you can use vagrant to start up your preconfigured vm:
+
+```bash
+vagrant init csub_base
+```
+
+And then configure Vagrantfile. It should look like this:
+
+```ruby
+Vagrant.configure("2") do |config|
+  config.vm.box = "csub_base"
+  config.vm.provider :virtualbox do |v|
+    v.memory = 4096
+    v.name="ubuntu test machine"
+  end
+
+  config.vm.network "forwarded_port", guest: 3389, host: 3389, id: "rdp", auto_correct: true
+
+  config.vm.network "private_network", ip: "<IP ADDRESS>"
+  
+end
+
+```
 
 # Connect the Virtual Machine to Guacamole
