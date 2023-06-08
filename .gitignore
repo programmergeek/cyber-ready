@@ -2,3 +2,5 @@
 .vscode
 *.log
 initdb.sql
+output-csub_base
+test_folder
