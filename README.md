@@ -132,23 +132,15 @@ quit
 Create a file called `Vagrantfile` and then copy and paste the following into it:
 
 ```ruby
-$repo = <<-SCRIPT
-echo \
-"deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-"$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  SCRIPT
-
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "ubuntu/focal64"
+  config.vm.box = "ubuntu/bionic64"
   config.vm.box_version = "20230530.0.0"
   config.vm.network "private_network", ip: "192.168.56.88"
 
   config.vm.provider :virtualbox do |v|
-    v.gui = true
     v.memory = 4096
-    v.name="ubunt_v20" # change this to give your vm a new name
+    v.name="ubuntu"
   end
 
   # Enable RDP
@@ -163,8 +155,7 @@ Vagrant.configure("2") do |config|
 
   # start xRDP on startup
   config.vm.provision :shell, inline: "sudo systemctl enable xrdp"
-  config.vm.provision :shell, inline: "sudo systemctl start xrdp"
-  
+
   # Add desktop environment
   config.vm.provision :shell, inline: "sudo apt-get install -y --no-install-recommends ubuntu-desktop"
   config.vm.provision :shell, inline: "sudo apt-get install -y --no-install-recommends virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11"
@@ -176,6 +167,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: "sudo shutdown -r now"
   
 end
+
 ```
 
 ## Packer (Optional but Recommended)
