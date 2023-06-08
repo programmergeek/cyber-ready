@@ -142,10 +142,54 @@ docker ps -a
 
 # Setup the Virtual Machine
 
+## VirtualBox
+
+1. Import VirtualBox’s repository key
+
+```bash
+curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox_2016.gpg
+curl -fsSL https://www.virtualbox.org/download/oracle_vbox.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/oracle_vbox.gpg
+echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian bullseye contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+```
+
+2. Re-build the cache
+```bash
+sudo apt update
+```
+
+3. Install dkms to keep up with the various vitualbox kernel modules
+
+```bash
+sudo apt install -y dkms
+``` 
+
+4. Install virtualbox
+
+```bash
+sudo apt install -y virtualbox virtualbox-ext-pack
+```
+
 ## Vagrant
 
 ### **Install Vagrant**
 
+If you are using a Debian or Ubuntu system, simply copy and paste the following into your command shell:
+
+```bash
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install vagrant
+```
+
+If you are using some other debain based system like Kali linux the follow the following instructions:
+
+1. Download the vagrant binaries [here](https://https://developer.hashicorp.com/vagrant/downloads)
+
+2. Open you command shell and type in:
+
+```bash 
+sudo apt-get install path/to/binaries
+```
 
 ### **Configure your Virtual Machine**
 
@@ -220,6 +264,14 @@ ResultInactive=no
 ResultActive=yes
 EOL
 ```
+
+To create the virtual machine enter:
+
+```bash
+vagrant up
+```
+
+This will start vagrant which will start up virtualbox and setup the virtual machine.
 
 ## Packer (Optional but Recommended)
 
