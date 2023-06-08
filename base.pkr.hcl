@@ -26,6 +26,18 @@ build {
   }
 
   provisioner "shell" {
+    script = "scripts/create_colord_pkla.sh"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo sed -i '4 i\\export XDG_CURRENT_DESKTOP=ubuntu:GNOME' /etc/xrdp/startwm.sh",
+      "sudo sed -i '4 i\\export GNOME_SHELL_SESSION_MODE=ubuntu' /etc/xrdp/startwm.sh",
+      "sudo sed -i '4 i\\export DESKTOP_SESSION=ubuntu' /etc/xrdp/startwm.sh"
+    ]
+  }
+
+  provisioner "shell" {
     expect_disconnect = true
     inline = [
       "sudo shutdown -r now",
