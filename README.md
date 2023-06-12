@@ -137,9 +137,6 @@ docker run --name example-guacamole --link example-guacd:guacd --link example-my
 docker ps -a
 ```
 
-## Configure Guacamole
-
-
 # Setup the Virtual Machine
 
 ## VirtualBox
@@ -241,6 +238,8 @@ Vagrant.configure("2") do |config|
 end
 ```
 
+Now copy and paste the following bash script. By default, Ubuntu doesn't allow users to connect to it remotely. This script is going to fix that.
+
 `scripts/create_colord_pkla.sh`:
 ```bash
 #!/bin/bash
@@ -341,7 +340,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "csub_base"
   config.vm.provider :virtualbox do |v|
     v.memory = 4096
-    v.name="ubuntu test machine"
+    v.name="<VM NAME>"
   end
 
   config.vm.network "forwarded_port", guest: 3389, host: 3389, id: "rdp", auto_correct: true
@@ -350,6 +349,79 @@ Vagrant.configure("2") do |config|
   
 end
 
+```
+## Automating
+
+Next we need to automate creating new virtual machines and configuring their network settings. Thankfully this is simple. Here copy this into a bash script file called `newvm.sh`:
+
+```bash
+#!/bin/bash
+
+while getopts ":l:i:p:" OPTION; do
+    case "$OPTION" in 
+        l)
+            lab_name="$OPTARG"
+            ;;
+        i)
+            student_id="$OPTARG"
+            ;;
+        p)
+            static_ip="$OPTARG"
+            ;;
+        ?)
+            echo "Usage: $0 [-l lab_name] [-i student_id] [-p static_ip_address]"
+            exit 1
+            ;;
+    esac
+done
+
+# check static_ip has been set
+if [ -z "$static_ip" ]
+then 
+    echo "Error: missing ip address"
+    exit 1
+fi
+
+# check if student_id is set
+if [ -z "$lab_name" ]
+then
+    echo "Error: missing lab name"
+    exit 1
+fi
+
+# check if student_id is set
+if [ -z "$student_id" ]
+then
+    echo "Error: missing student id"
+    exit 1
+fi
+
+# hard coded path to root dir
+root_dir=""
+
+# create lab folder
+mkdir -p "$root_dir/labs/$student_id/$lab_name"
+
+# copy files in template folder into lab folder
+cp -r "$root_dir/vm-template/." "$root_dir/labs/$student_id/$lab_name"
+
+# give the virtal machine a name
+sed -i "4 i v.name=\"$student_id-$lab_name\"" $root_dir/labs/$student_id/$lab_name/Vagrantfile
+
+# set the static ip address of the machine
+sed -i "9 i config.vm.network \"private_network\", ip: \"$static_ip\"" $root_dir/labs/$student_id/$lab_name/Vagrantfile
+```
+
+Next, you need to make the script executable. Type the following into the command line then press enter:
+
+```bash
+chmod +x path/to/newvm.sh
+```
+
+Now if you want to run the scripts its going to look something like this:
+
+```bash
+./newvm.sh -i 202005468 -l encrypt -p 192.162.56.24
 ```
 
 # Connect the Virtual Machine to Guacamole
