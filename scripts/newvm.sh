@@ -39,22 +39,16 @@ then
     exit 1
 fi
 
-
-current_dir="$PWD"
-parent_dir="$(dirname "$current_dir")"
+root_dir="/home/will/Documents/Projects"
 
 # create lab folder
-mkdir -p "$parent_dir/labs/$student_id/$lab_name"
+mkdir -p "$root_dir/labs/$student_id/$lab_name"
 
 # copy files in template folder into lab folder
-cp -r "$parent_dir/vm-template/." "$parent_dir/labs/$student_id/$lab_name"
+cp -r "$root_dir/vm-template/." "$root_dir/labs/$student_id/$lab_name"
 
 # give the virtal machine a name
-sed -i "4 i v.name=\"$student_id-$lab_name\"" $parent_dir/labs/$student_id/$lab_name/Vagrantfile
+sed -i "4 i v.name=\"$student_id-$lab_name\"" $root_dir/labs/$student_id/$lab_name/Vagrantfile
 
 # set the static ip address of the machine
-sed -i "9 i config.vm.network \"private_network\", ip: \"$static_ip\"" $parent_dir/labs/$student_id/$lab_name/Vagrantfile
-
-export VAGRANT_CWD="$parent_dir/labs/$student_id/$lab_name"
-
-vagrant up
+sed -i "9 i config.vm.network \"private_network\", ip: \"$static_ip\"" $root_dir/labs/$student_id/$lab_name/Vagrantfile
