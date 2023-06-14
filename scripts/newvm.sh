@@ -52,3 +52,7 @@ sed -i "4 i v.name=\"$student_id-$lab_name\"" $root_dir/labs/$student_id/$lab_na
 
 # set the static ip address of the machine
 sed -i "9 i config.vm.network \"private_network\", ip: \"$static_ip\"" $root_dir/labs/$student_id/$lab_name/Vagrantfile
+
+export VAGRANT_CWD="$root_dir/labs/$student_id/$lab_name"
+
+vagrant up
