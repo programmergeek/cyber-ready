@@ -1,3 +1,4 @@
+#! /bin/bash
 while getopts ":l:i:" OPTION; do
     case "$OPTION" in 
         l)
