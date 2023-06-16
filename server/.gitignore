@@ -18,3 +18,5 @@ bin
 lib
 .project
 pyvenv.cfg
+
+*.db

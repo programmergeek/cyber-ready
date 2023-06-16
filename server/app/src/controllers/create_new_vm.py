@@ -1,7 +1,9 @@
 import os
 import guacamole as guacamole
+from ..models.ip_addresses import assign_new_address
 
-def create_vm(lab_name:str, student_id:str, static_ip:str):
+def create_vm(lab_name:str, student_id:str):
+    static_ip = assign_new_address()
     success = os.system(f"newvm.sh -l {lab_name} -i {student_id} -p {static_ip}")
     if success == 0:
         session = guacamole.session("http://127.0.0.1:8080/guacamole", "mysql", "guacadmin", "guacadmin")
