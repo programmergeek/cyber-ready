@@ -2,6 +2,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useContext, useEffect } from "react";
 import { userContext } from "~/context";
+import md5 from "blueimp-md5";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -12,7 +13,7 @@ export default function Home() {
     user.updateUser({
       email: session?.user.email as string,
       name: session?.user.name as string,
-      userHash: session?.user.email as string,
+      userHash: md5(session?.user.email as string),
     });
   }, [session]);
   if (session) {
@@ -24,7 +25,7 @@ export default function Home() {
         <main className="flex min-h-screen flex-col items-center justify-center gap-5">
           <p className="text-h2"> Home page</p>
           <div className="rounded-[10px] bg-black px-4 py-3 text-white">
-            {user.user?.email}
+            {user.user?.userHash}
           </div>
           <button
             className="text-grey"
