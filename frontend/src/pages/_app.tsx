@@ -3,14 +3,21 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
+import { userContext } from "~/context";
+import { User } from "~/types";
+import { useState } from "react";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const UserContext = userContext();
+  const [user, updateUser] = useState<User>();
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <UserContext.Provider value={{ user: user, updateUser: updateUser }}>
+        <Component {...pageProps} />
+      </UserContext.Provider>
     </SessionProvider>
   );
 };

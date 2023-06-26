@@ -1,9 +1,20 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
+import { useContext, useEffect } from "react";
+import { userContext } from "~/context";
 
 export default function Home() {
   const { data: session } = useSession();
+  const context = userContext();
+  const user = useContext(context);
 
+  useEffect(() => {
+    user.updateUser({
+      email: session?.user.email as string,
+      name: session?.user.name as string,
+      userHash: session?.user.email as string,
+    });
+  }, [session]);
   if (session) {
     return (
       <>
@@ -12,6 +23,9 @@ export default function Home() {
         </Head>
         <main className="flex min-h-screen flex-col items-center justify-center gap-5">
           <p className="text-h2"> Home page</p>
+          <div className="rounded-[10px] bg-black px-4 py-3 text-white">
+            {user.user?.email}
+          </div>
           <button
             className="text-grey"
             onClick={() => {
