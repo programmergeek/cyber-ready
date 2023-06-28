@@ -13,7 +13,7 @@ export default function Home() {
     user.updateUser({
       email: session?.user.email as string,
       name: session?.user.name as string,
-      userHash: md5(session?.user.email as string),
+      userHash: md5(session?.user.id as string),
     });
   }, [session]);
   if (session) {
