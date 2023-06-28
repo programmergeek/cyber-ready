@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "node src/index.js"
+  },
   "dependencies": {
     "guacamole-lite": "^0.7.1"
   }
