@@ -30,13 +30,15 @@ const GuacamoleClient: React.FC<GuacamoleStageProps> = () => {
   );
   const [client, updateClient] = useState<Client>();
 
+  const [isHidden, updateIsHidden] = useState(false);
+
   useEffect(() => {
     updateClient(new Guacamole.Client(tunnel));
   }, []);
 
   useEffect(() => {
     if (myRef.current) {
-      myRef.current.innerHTML = "";
+      myRef.current.innerText = "";
       if (client) {
         myRef.current.appendChild(client?.getDisplay().getElement() as Node);
         const mouse = new Guacamole.Mouse(client.getDisplay().getElement());
@@ -75,7 +77,19 @@ const GuacamoleClient: React.FC<GuacamoleStageProps> = () => {
     }
   }, [client, token]);
 
-  return <div ref={myRef} className="mt-5" />;
+  useEffect(() => {
+    if (myRef.current?.firstChild) {
+      myRef.current.firstChild?.addEventListener("mouseenter", function show() {
+        updateIsHidden(false);
+      });
+
+      myRef.current.firstChild?.addEventListener("mouseleave", function hide() {
+        updateIsHidden(true);
+      });
+    }
+  }, [client]);
+
+  return <div ref={myRef} className={`${isHidden ? "" : "cursor-none"}`} />;
 };
 
 export default GuacamoleClient;
