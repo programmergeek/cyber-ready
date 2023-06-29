@@ -10,7 +10,7 @@ const Lab: NextPage = () => {
         <title>Lab</title>
       </Head>
       <main>
-        <GuacamoleClient />
+        <GuacamoleClient hostname="192.168.56.5" />
       </main>
     </>
   );
