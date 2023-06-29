@@ -22,6 +22,8 @@ const GuacamoleClient: React.FC<GuacamoleClientProps> = ({ ...props }) => {
           security: "any",
           "ignore-cert": true,
           "enable-wallpaper": false,
+          width: 1008,
+          height: 935,
         },
       },
     })
