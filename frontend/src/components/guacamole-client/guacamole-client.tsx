@@ -2,9 +2,11 @@ import Guacamole, { Client } from "guacamole-common-js";
 import React, { useEffect, useRef, useState } from "react";
 import encrypt from "./encrypt";
 
-interface GuacamoleStageProps {}
+interface GuacamoleClientProps {
+  hostname: string;
+}
 
-const GuacamoleClient: React.FC<GuacamoleStageProps> = () => {
+const GuacamoleClient: React.FC<GuacamoleClientProps> = ({ ...props }) => {
   const myRef = useRef<HTMLDivElement | null>(null);
 
   const [token] = useState(
@@ -12,7 +14,7 @@ const GuacamoleClient: React.FC<GuacamoleStageProps> = () => {
       connection: {
         type: "rdp",
         settings: {
-          hostname: "192.168.56.5",
+          hostname: props.hostname,
           username: "vagrant",
           password: "vagrant",
           "enable-drive": true,
