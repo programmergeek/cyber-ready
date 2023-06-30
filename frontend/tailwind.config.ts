@@ -19,6 +19,12 @@ export default {
         h2: ["2.25rem", "2.75rem"],
         h3: ["1.5rem", "2rem"],
         regular: ["1rem", "1.5rem"]
+      },
+      borderRadius: {
+        meap: '10px'
+      },
+      boxShadow:{
+        cardShadow: `2px 2px #1E1E1E`
       }
     },
   },
