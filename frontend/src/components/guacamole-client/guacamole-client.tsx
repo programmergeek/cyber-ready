@@ -72,23 +72,30 @@ const GuacamoleClient: React.FC<GuacamoleClientProps> = ({ ...props }) => {
           client.getDisplay().showCursor(false);
         };
 
-        // get keyboard input
-        const keyboard = new Guacamole.Keyboard(document);
-        keyboard.onkeydown = (keysym) => client.sendKeyEvent(1, keysym);
-        keyboard.onkeyup = (keysym) => client.sendKeyEvent(0, keysym);
         client.connect("token=" + token);
       }
     }
   }, [client, token]);
 
   useEffect(() => {
+    const keyboard = new Guacamole.Keyboard(document);
     if (myRef.current?.firstChild) {
       myRef.current.firstChild?.addEventListener("mouseenter", function show() {
         updateIsHidden(false);
+        if (client) {
+          // give control of the keyboard to virtual machine
+          keyboard.onkeydown = (keysym) => client.sendKeyEvent(1, keysym);
+          keyboard.onkeyup = (keysym) => client.sendKeyEvent(0, keysym);
+        }
       });
 
       myRef.current.firstChild?.addEventListener("mouseleave", function hide() {
         updateIsHidden(true);
+        if (client) {
+          // give back control of the keyboard to the webapp
+          keyboard.onkeydown = null;
+          keyboard.onkeyup = null;
+        }
       });
     }
   }, [client]);
