@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 from .controllers.create_new_vm import create_vm
 from .controllers.stop_vm import stop_vm  
 from .controllers.start_vm import start_vm
@@ -6,6 +7,7 @@ from .helper_functions.generate_addresses import generate_addresses
 from .models.ip_addresses import db_init, add_addresses, assign_new_address
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello():
