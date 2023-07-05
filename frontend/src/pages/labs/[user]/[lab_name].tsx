@@ -10,6 +10,7 @@ import GuacamoleClient, {
 import { TextField } from "~/components/textfield/textfield";
 import { GoLightBulb } from "react-icons/go";
 import { IoPower } from "react-icons/io5";
+import Link from "next/link";
 
 const Lab: NextPage = () => {
   const [showHint, updateShowHint] = useState(false);
@@ -117,9 +118,22 @@ const Lab: NextPage = () => {
               </Text>
             </OverflowCard>
             <div className="flex justify-end">
-              <button className="flex w-fit gap-2 rounded-meap bg-red px-4 py-2 text-white">
-                <IoPower className="mt-1 text-white" color="#fff" /> Shutdown
-                Lab
+              <button
+                className="flex w-fit gap-2 rounded-meap bg-red px-4 py-2 text-white"
+                onClick={async () =>
+                  await fetch("http://127.0.0.1:5000/stop", {
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    body: JSON.stringify({ lab_name: "meep", id: "202005881" }),
+                  }).then((res) => {
+                    console.log(res.body);
+                  })
+                }
+              >
+                <IoPower className="mt-1 text-white" color="#fff" />
+                <Link href={{ pathname: "/" }}>Shutdown Lab</Link>
               </button>
             </div>
           </div>
