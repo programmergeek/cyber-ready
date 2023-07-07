@@ -39,12 +39,16 @@ const Lab: NextPage = () => {
               <TextField />
               <div className="flex w-full justify-end gap-3">
                 <button
-                  className="rounded-meap border border-grey bg-white px-3 py-2"
+                  className={`rounded-meap border ${
+                    !showHint ? "border-grey" : "border-yellow"
+                  } bg-white px-3 py-2`}
                   onClick={() => {
                     updateShowHint(!showHint);
                   }}
                 >
-                  <GoLightBulb className="text-grey" />
+                  <GoLightBulb
+                    className={`${!showHint ? "text-grey" : "text-yellow"}`}
+                  />
                 </button>
                 <button className="rounded-meap bg-black px-4 py-2 text-white">
                   Check
