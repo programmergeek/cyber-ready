@@ -9,7 +9,7 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
-const port = 4000
+const port = 4040
 
 app.post('/', (req, res) => {
   if(fs.existsSync(req.body.filepath)){
