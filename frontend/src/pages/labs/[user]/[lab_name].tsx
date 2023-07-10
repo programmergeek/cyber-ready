@@ -50,7 +50,25 @@ const Lab: NextPage = () => {
                     className={`${!showHint ? "text-grey" : "text-yellow"}`}
                   />
                 </button>
-                <button className="rounded-meap bg-black px-4 py-2 text-white">
+                <button
+                  className="rounded-meap bg-black px-4 py-2 text-white"
+                  onClick={async () => {
+                    const data = await window
+                      .fetch("http://127.0.0.1:4000", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          filepath: "/home/vagrant/Documents/meap/test",
+                        }),
+                      })
+                      .then((res) => res.json())
+                      .catch(console.error);
+
+                    console.log(data);
+                  }}
+                >
                   Check
                 </button>
               </div>
