@@ -25,7 +25,7 @@ const Lab: NextPage = () => {
           <div className="mt-1">
             <GuacamoleClient hostname="192.168.56.5" />
           </div>
-          <div className="relative mt-2 flex flex-col gap-2">
+          <div className="relative mt-2 flex flex-col gap-2 transition">
             <Card shadow>
               <Progress totalTasks={3} completedTasks={1} />
               <div className="my-5 max-h-28 overflow-auto pr-3">
@@ -41,13 +41,15 @@ const Lab: NextPage = () => {
                 <button
                   className={`rounded-meap border ${
                     !showHint ? "border-grey" : "border-yellow"
-                  } bg-white px-3 py-2`}
+                  } bg-white px-3 py-2 transition-colors`}
                   onClick={() => {
                     updateShowHint(!showHint);
                   }}
                 >
                   <GoLightBulb
-                    className={`${!showHint ? "text-grey" : "text-yellow"}`}
+                    className={`${
+                      !showHint ? "text-grey" : "text-yellow"
+                    } transition-colors`}
                   />
                 </button>
                 <button
