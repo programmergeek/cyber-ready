@@ -15,7 +15,7 @@ export const Card: React.FC<Props> = ({ ...props }) => {
   };
   return (
     <div
-      className={`min-h-[100px] min-w-[100px] rounded-meap border px-5 py-4 ${
+      className={`min-w-[100px] rounded-meap border px-5 py-4 ${
         props.dark ? styles.dark : styles.normal
       } ${props.shadow && !props.dark ? styles.normalShadow : ""}`}
     >
