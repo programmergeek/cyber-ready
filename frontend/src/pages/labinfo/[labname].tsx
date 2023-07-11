@@ -4,6 +4,8 @@ import Head from "next/head";
 import React from "react";
 import { Card, OverflowCard, Text } from "~/components";
 import { BsCheck2 } from "react-icons/bs";
+import { BiChevronLeft } from "react-icons/bi";
+import Link from "next/link";
 
 const LabPage: NextPage = () => {
   const currentTask = 2;
@@ -39,8 +41,18 @@ const LabPage: NextPage = () => {
       <Head>
         <title>Lab Info</title>
       </Head>
-      <main className="mt-1 grid w-full grid-cols-[auto_70%_auto]">
-        <div></div>
+      <main className="mt-3 grid w-full grid-cols-[auto_70%_auto]">
+        <div className="w-fit pl-5">
+          <Link href={{ pathname: "/" }} className="flex w-fit">
+            <span className="flex items-center">
+              <BiChevronLeft />
+            </span>
+            <span>
+              Back
+              {/* <div className="h-0.5 w-1 bg-deepBlack transition-all duration-200 ease-in hover:w-[38px]"></div> */}
+            </span>
+          </Link>
+        </div>
         <div className="flex flex-col gap-2">
           <Card shadow>
             <div className="mt-3 grid grid-cols-[70%_auto]">
