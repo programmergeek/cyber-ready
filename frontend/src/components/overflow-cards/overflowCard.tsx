@@ -4,7 +4,7 @@ import { Card } from "../card/card";
 interface OverflowCardProps {
   title?: string;
   children?: React.ReactNode;
-  height?: string;
+  height?: number;
 }
 
 export const OverflowCard: React.FC<OverflowCardProps> = ({ ...props }) => {
@@ -20,7 +20,7 @@ export const OverflowCard: React.FC<OverflowCardProps> = ({ ...props }) => {
       <div className="relative">
         <div
           className={`-z-10 mt-5 overflow-auto px-2 pb-2 ${
-            props.height ? `max-h-[${props.height}]` : "max-h-64"
+            props.height ? `max-h-[${props.height}px]` : "max-h-64"
           }`}
         >
           {props.children}
