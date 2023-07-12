@@ -7,3 +7,13 @@ body{
     font-family: 'Space Grotesk', sans-serif;
     font-size: 16px;
 }
+
+@layer base{
+    th{
+        @apply py-3;
+    }
+    td{
+        @apply py-3;
+    }
+    
+}

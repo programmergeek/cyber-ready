@@ -23,7 +23,7 @@ const Lab: NextPage = () => {
       <main>
         <div className="grid grid-cols-[1008px_auto] gap-2 pr-2">
           <div className="mt-1">
-            <GuacamoleClient hostname="192.168.56.5" />
+            <GuacamoleClient hostname="192.168.56.11" />
           </div>
           <div className="relative mt-2 flex flex-col gap-2 transition">
             <Card shadow>
@@ -56,7 +56,7 @@ const Lab: NextPage = () => {
                   className="rounded-meap bg-black px-4 py-2 text-white"
                   onClick={async () => {
                     const data = await window
-                      .fetch("http://127.0.0.1:4000", {
+                      .fetch("http://192.168.56.11:4000", {
                         method: "POST",
                         headers: {
                           "Content-Type": "application/json",
