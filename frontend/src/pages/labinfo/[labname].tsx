@@ -91,7 +91,7 @@ const LabPage: NextPage = () => {
           </Card>
           <div className="grid grid-cols-[45%_33%_auto] gap-1">
             <div>
-              <OverflowCard title="Tasks:" height={450}>
+              <OverflowCard title="Tasks:" height="max-h-[450px]">
                 {tasks.map((task, index) => {
                   return (
                     <div

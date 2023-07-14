@@ -2,12 +2,12 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
     previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "mysql"
     // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
     // Further reading:
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -49,13 +49,14 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String        @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?       @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
+    environment   AssignedLab[]
 }
 
 model VerificationToken {
@@ -64,4 +65,55 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Category {
+    id   String @id @default(cuid())
+    name String
+    lab  Lab[]
+}
+
+model Lab {
+    id          String        @id @default(cuid())
+    description String        @db.VarChar(5000)
+    dueDate     DateTime
+    categoryId  String
+    category    Category      @relation(fields: [categoryId], references: [id])
+    task        Task[]
+    environment AssignedLab[]
+}
+
+model Task {
+    id          String  @id @default(cuid())
+    taskNumber  Int
+    instruction String  @db.VarChar(5000)
+    isCompleted Boolean @default(false)
+    answer      String  @db.VarChar(5000)
+    labId       String
+    hint        String  @db.VarChar(5000)
+    lab         Lab     @relation(fields: [labId], references: [id])
+}
+
+model AssignedLab {
+    id          String       @id
+    labId       String
+    userId      String
+    state       LabState     @default(NotStarted)
+    lab         Lab          @relation(fields: [labId], references: [id])
+    user        User         @relation(fields: [userId], references: [id])
+    environment Environment?
+}
+
+model Environment {
+    id         String      @id
+    assignedTo String      @unique
+    ipAddress  String
+    assignLab  AssignedLab @relation(fields: [assignedTo], references: [id])
+}
+
+enum LabState {
+    NotStarted
+    Incomplete
+    Complete
+    Overdue
 }
